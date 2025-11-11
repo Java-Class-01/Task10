@@ -47,4 +47,26 @@ public class UsingPDF {
         return ExportToPDF;
 
     }
+    private void loadProductsForTheTable() {
+        tableModel.setRowCount(0); // Clear existing table rows
+        String sql = "SELECT id, product_name, price FROM products";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("product_name");
+                double price = rs.getDouble("price");
+                tableModel.addRow(new Object[]{id, name, price});
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(Mainframe,
+                    "Error loading products: " + e.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
