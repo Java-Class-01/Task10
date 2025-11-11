@@ -34,4 +34,17 @@ public class UsingPDF {
         holdingPanel.add(this.prepareExportToPDFButton(), BorderLayout.SOUTH);
         return holdingPanel;
     }
+    public JScrollPane prepareJTableTabularDataTable() {
+        String[] columnNames = {"ID", "Product Name", "Price"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        TabularDataTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(TabularDataTable);
+        return scrollPane;
+    }
+    public JButton prepareExportToPDFButton() {
+        ExportToPDF = new JButton("Export to PDF");
+        ExportToPDF.addActionListener(e -> exportToPDF());
+        return ExportToPDF;
+
+    }
 }
