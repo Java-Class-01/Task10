@@ -69,4 +69,6 @@ public class UsingPDF {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
+    //Awap complete the export to pdf method which will allow to save the details into pdf and allows the user select the location
+    //and any left out details include them
 }
