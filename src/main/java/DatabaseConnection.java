@@ -5,7 +5,7 @@ public class DatabaseConnection {
     //details of sql server
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=ShopDB;encrypt=true;trustServerCertificate=true;";
     private static final String USER = "sa";
-    private static final String PASSWORD = "use your password";
+    private static final String PASSWORD = "root";
 
     public static Connection getConnection() {
         try {
