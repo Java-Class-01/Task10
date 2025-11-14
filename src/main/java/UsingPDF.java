@@ -16,8 +16,14 @@ public class UsingPDF {
     JTable TabularDataTable;
     JButton ExportToPDF, LoadData;
     DefaultTableModel tableModel;
+    private boolean headlessMode;
 
     public UsingPDF() {
+        this(false);
+    }
+
+    public UsingPDF(boolean headlessMode) {
+        this.headlessMode = headlessMode;
         this.prepareJFrame();
         this.loadProductsForTheTable(); // Load data from DB
     }
@@ -28,7 +34,9 @@ public class UsingPDF {
         Mainframe.setLayout(new BorderLayout(10, 10));
         Mainframe.add(this.prepareJPanelholdingPanel(), BorderLayout.CENTER);
         Mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Mainframe.setVisible(true);
+        if (!headlessMode) {
+            Mainframe.setVisible(true);
+        }
         return Mainframe;
     }
 
@@ -69,8 +77,17 @@ public class UsingPDF {
         tableModel.setRowCount(0); // Clear existing table rows
         String sql = "SELECT id, product_name, price FROM products";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
+        Connection conn = DatabaseConnection.getConnection();
+        if (conn == null) {
+            if (!headlessMode) {
+                JOptionPane.showMessageDialog(Mainframe, "Database connection failed! Please check your database configuration.",
+                        "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
+        }
+
+        try (Connection connection = conn;
+             Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -80,21 +97,28 @@ public class UsingPDF {
                 tableModel.addRow(new Object[]{id, name, price});
             }
 
-            if (tableModel.getRowCount() == 0) {
+            if (tableModel.getRowCount() == 0 && !headlessMode) {
                 JOptionPane.showMessageDialog(Mainframe, "No data found in database.", "Info", JOptionPane.INFORMATION_MESSAGE);
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(Mainframe, "Error loading products: " + e.getMessage(),
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
+            if (!headlessMode) {
+                JOptionPane.showMessageDialog(Mainframe, "Error loading products: " + e.getMessage(),
+                        "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     // PDF Export Logic
     private void exportToPDF() {
         if (tableModel.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(Mainframe, "No data to export!", "Warning", JOptionPane.WARNING_MESSAGE);
+            if (!headlessMode) {
+                JOptionPane.showMessageDialog(Mainframe, "No data to export!", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
             return;
+        }
+        if (headlessMode) {
+            return; // Skip file chooser in headless mode
         }
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save PDF File");
@@ -159,11 +183,15 @@ public class UsingPDF {
                 document.add(pdfTable);
                 document.close();
 
-                JOptionPane.showMessageDialog(Mainframe, "PDF exported successfully!\nSaved at: " + filePath);
+                if (!headlessMode) {
+                    JOptionPane.showMessageDialog(Mainframe, "PDF exported successfully!\nSaved at: " + filePath);
+                }
 
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(Mainframe, "Error exporting to PDF: " + ex.getMessage(),
-                        "Export Error", JOptionPane.ERROR_MESSAGE);
+                if (!headlessMode) {
+                    JOptionPane.showMessageDialog(Mainframe, "Error exporting to PDF: " + ex.getMessage(),
+                            "Export Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
