@@ -24,23 +24,33 @@ public class UsingPDF {
 
     public UsingPDF(boolean headlessMode) {
         this.headlessMode = headlessMode;
-        this.prepareJFrame();
+        // Initialize table model (not a Swing component, safe in headless mode)
+        String[] columnNames = {"ID", "Product Name", "Price"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        
+        if (!headlessMode) {
+            this.prepareJFrame();
+        }
         this.loadProductsForTheTable(); // Load data from DB
     }
 
     public JFrame prepareJFrame() {
+        if (headlessMode) {
+            return null;
+        }
         Mainframe = new JFrame("JTable and PDF Export");
         Mainframe.setSize(600, 400);
         Mainframe.setLayout(new BorderLayout(10, 10));
         Mainframe.add(this.prepareJPanelholdingPanel(), BorderLayout.CENTER);
         Mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        if (!headlessMode) {
-            Mainframe.setVisible(true);
-        }
+        Mainframe.setVisible(true);
         return Mainframe;
     }
 
     public JPanel prepareJPanelholdingPanel() {
+        if (headlessMode) {
+            return null;
+        }
         holdingPanel = new JPanel(new BorderLayout(10, 10));
         holdingPanel.add(this.prepareJTableTabularDataTable(), BorderLayout.CENTER);
 
@@ -53,20 +63,28 @@ public class UsingPDF {
     }
 
     public JScrollPane prepareJTableTabularDataTable() {
-        String[] columnNames = {"ID", "Product Name", "Price"};
-        tableModel = new DefaultTableModel(columnNames, 0);
+        if (headlessMode) {
+            return null;
+        }
+        // tableModel already initialized in constructor
         TabularDataTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(TabularDataTable);
         return scrollPane;
     }
 
     public JButton prepareLoadDataButton() {
+        if (headlessMode) {
+            return null;
+        }
         LoadData = new JButton("Load Data");
         LoadData.addActionListener(e -> loadProductsForTheTable());
         return LoadData;
     }
 
     public JButton prepareExportToPDFButton() {
+        if (headlessMode) {
+            return null;
+        }
         ExportToPDF = new JButton("Export to PDF");
         ExportToPDF.addActionListener(e -> exportToPDF());
         return ExportToPDF;
@@ -74,6 +92,11 @@ public class UsingPDF {
 
     // Load data from the database into JTable
     private void loadProductsForTheTable() {
+        if (tableModel == null) {
+            // Initialize if not already done
+            String[] columnNames = {"ID", "Product Name", "Price"};
+            tableModel = new DefaultTableModel(columnNames, 0);
+        }
         tableModel.setRowCount(0); // Clear existing table rows
         String sql = "SELECT id, product_name, price FROM products";
 
