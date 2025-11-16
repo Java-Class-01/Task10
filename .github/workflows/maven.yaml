@@ -2,9 +2,9 @@ name: Java CI with Maven and SonarQube
 
 on:
   push:
-    branches: [ main, master, 'branch#1' ]
+    branches: [ main, master, 'branch#1', 'Branch1/UserInterface' ]
   pull_request:
-    branches: [ main, master, 'branch#1' ]
+    branches: [ main, master, 'branch#1', 'Branch1/UserInterface' ]
   workflow_dispatch:
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
             -Dsonar.projectKey=Task10 \
             -Dsonar.projectName=Task10 \
             -Dsonar.host.url=https://dignified-hingeless-ehtel.ngrok-free.dev \
-            -Dsonar.token=sqa_2a03975856e995f0f5738bd769b39a7198841781 \
+            -Dsonar.token=sqa_b67b4ac9005c2acbbab77cbdad143d69fb619212 \
             -Dsonar.sources=src/main/java \
             -Dsonar.tests=src/test/java \
             -Dsonar.java.source=17 \
@@ -65,10 +65,10 @@ jobs:
           echo "Triggering Jenkins pipeline..."
           
           # Hardcoded Jenkins configuration - Update these values for your Jenkins instance
-          JENKINS_URL="http://localhost:8080"  # Change to your Jenkins URL
-          JENKINS_USER="admin"                  # Change to your Jenkins username
-          JENKINS_TOKEN="your-api-token-here"   # Change to your Jenkins API token
-          JENKINS_JOB_NAME="Task10"             # Change to your Jenkins job name
+          JENKINS_URL="https://060e6e0caaea.ngrok-free.app"  # Change to your Jenkins URL
+          JENKINS_USER="brice"                  # Change to your Jenkins username
+          JENKINS_TOKEN="110ab4bdced5725271e4cf91208945d4b6"   # Change to your Jenkins API token
+          JENKINS_JOB_NAME="TaskTen"             # Change to your Jenkins job name
           
           # Set default job name if not provided
           JOB_NAME="${JENKINS_JOB_NAME:-Task10}"

@@ -1,0 +1,6 @@
+projectKey=TaskTen
+serverUrl=http://localhost:9000
+serverVersion=25.11.0.114957
+dashboardUrl=http://localhost:9000/dashboard?id=TaskTen
+ceTaskId=19638869-9cf6-4efa-8737-81d47fb0dbc6
+ceTaskUrl=http://localhost:9000/api/ce/task?id=19638869-9cf6-4efa-8737-81d47fb0dbc6
