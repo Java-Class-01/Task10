@@ -32,10 +32,11 @@ jobs:
       - name: Run SonarQube Analysis
         continue-on-error: true
         run: |
+          echo "Starting SonarQube analysis..."
           mvn sonar:sonar \
             -Dsonar.projectKey=Task10 \
             -Dsonar.projectName=Task10 \
-            -Dsonar.host.url=  https://dignified-hingeless-ehtel.ngrok-free.dev \
+            -Dsonar.host.url=https://dignified-hingeless-ehtel.ngrok-free.dev \
             -Dsonar.token=sqa_b67b4ac9005c2acbbab77cbdad143d69fb619212 \
             -Dsonar.sources=src/main/java \
             -Dsonar.tests=src/test/java \
@@ -43,20 +44,46 @@ jobs:
             -Dsonar.java.target=17 \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.scm.provider=git \
-            -Dsonar.qualitygate.wait=false || true
+            -Dsonar.qualitygate.wait=false
+          SONAR_EXIT_CODE=$?
+          if [ $SONAR_EXIT_CODE -eq 0 ]; then
+            echo "SonarQube analysis completed successfully!"
+          else
+            echo "SonarQube analysis failed with exit code: $SONAR_EXIT_CODE"
+            echo "Check the logs above for details"
+          fi
+          exit $SONAR_EXIT_CODE
         id: sonar
       
       - name: SonarQube Analysis Status
         if: always()
         run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "SonarQube Analysis Status"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           if [ "${{ steps.sonar.outcome }}" == "failure" ]; then
-            echo "SonarQube analysis completed but Elasticsearch indexing failed"
-            echo "This is a known server-side issue with Elasticsearch indexing"
-            echo "The analysis data was uploaded successfully - check SonarQube dashboard"
-            echo "Workflow will continue - this is not a blocking error"
+            echo "❌ SonarQube analysis failed"
+            echo ""
+            echo "Possible reasons:"
+            echo "  1. SonarQube server is not accessible"
+            echo "  2. Invalid or expired token"
+            echo "  3. Network connectivity issues"
+            echo "  4. SonarQube server configuration issues"
+            echo ""
+            echo "Check the SonarQube step logs above for detailed error messages"
+            echo "Verify:"
+            echo "  - SonarQube URL is correct: https://dignified-hingeless-ehtel.ngrok-free.dev"
+            echo "  - Token is valid and has proper permissions"
+            echo "  - SonarQube server is running and accessible"
+          elif [ "${{ steps.sonar.outcome }}" == "success" ]; then
+            echo "✅ SonarQube analysis completed successfully!"
+            echo ""
+            echo "View results at:"
+            echo "  https://dignified-hingeless-ehtel.ngrok-free.dev/dashboard?id=Task10"
           else
-            echo "SonarQube analysis completed successfully"
+            echo "⚠️  SonarQube analysis status: ${{ steps.sonar.outcome }}"
           fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: Trigger Jenkins Pipeline
         if: always()
