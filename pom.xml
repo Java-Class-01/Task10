@@ -33,6 +33,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
+                <configuration>
+                    <!-- Run tests in same JVM to avoid memory issues -->
+                    <forkCount>0</forkCount>
+                    <!-- Set headless mode for tests -->
+                    <argLine>-Djava.awt.headless=true -Dheadless=true</argLine>
+                    <!-- Reduce memory usage -->
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
             </plugin>
         </plugins>
     </build>

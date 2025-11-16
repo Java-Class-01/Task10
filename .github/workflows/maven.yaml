@@ -35,7 +35,7 @@ jobs:
           mvn sonar:sonar \
             -Dsonar.projectKey=Task10 \
             -Dsonar.projectName=Task10 \
-            -Dsonar.host.url=https://dignified-hingeless-ehtel.ngrok-free.dev \
+            -Dsonar.host.url=  https://dignified-hingeless-ehtel.ngrok-free.dev \
             -Dsonar.token=sqa_b67b4ac9005c2acbbab77cbdad143d69fb619212 \
             -Dsonar.sources=src/main/java \
             -Dsonar.tests=src/test/java \
